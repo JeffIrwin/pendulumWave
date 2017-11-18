@@ -60,7 +60,7 @@ colormap('hsv')
 c = linspace(0, 1, n);
 
 % video file name
-vidobj = VideoWriter('pendulum_wave_11.avi');
+vidobj = VideoWriter('pendulum_wave_12.avi');
 open(vidobj);
 
 fprintf('\nNumber of frames = %d\n', size(tmin: dt: tmax, 2))
@@ -73,8 +73,11 @@ k2 = (1: nk)';
 k3 = k2 * (1 ./ k1);
 k4 = [0; unique(k3(k3 <= 1))]
 
+k = 0;
+
 % time loop
 for t = tmin: dt: tmax
+    k = k + 1;
     
     % angles, x and y coords of each pendulum
     theta = theta0 * cos(2 * pi * t * f);
@@ -93,10 +96,22 @@ for t = tmin: dt: tmax
     set(gca, 'xcolor', 'k', 'ycolor', 'k')
     set(gcf, 'color', 'k')
     
-    [vmin, imin] = min(abs(k4 - t));
-    title(sprintf('%s', rats(k4(imin))))
+    %[vmin, imin] = min(abs(k4 - t));
+    %title(sprintf('%s', rats(k4(imin))))
     
-    writeVideo(vidobj, getframe);
+    fig = gcf;
+
+    % Preserve black bg color.
+    fig.InvertHardcopy = 'off';
+
+    % Print to image w/ 247 dpi, i.e. 1080p width.
+    cdata = print('-r247', '-RGBImage');
+    
+    writeVideo(vidobj, cdata);
+    
+%     if k == 10
+%         break
+%     end
 
 end
 
