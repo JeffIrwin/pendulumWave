@@ -27,7 +27,7 @@ T = 1 ./ f;
 l = (T / (2 * pi)) .^ 2 * g;
 
 % time step
-dt = min(T) / 40;
+dt = min(T) / 80;
 
 % bounding frame coordinates
 ymin = -max(l);
@@ -61,6 +61,8 @@ c = linspace(0, 1, n);
 
 % video file name
 vidobj = VideoWriter('pendulum_wave_12.avi');
+vidobj.FrameRate = 60;
+vidobj.Quality = 90;
 open(vidobj);
 
 fprintf('\nNumber of frames = %d\n', size(tmin: dt: tmax, 2))
@@ -74,10 +76,17 @@ k3 = k2 * (1 ./ k1);
 k4 = [0; unique(k3(k3 <= 1))]
 
 k = 0;
+ip = 0;
 
 % time loop
 for t = tmin: dt: tmax
     k = k + 1;
+    
+    rp = 1000 * (t - tmin) / (tmax - tmin);
+    if rp > ip + 1
+        ip = floor(rp);
+        fprintf('%d / 1000 progress\n', ip);
+    end
     
     % angles, x and y coords of each pendulum
     theta = theta0 * cos(2 * pi * t * f);
